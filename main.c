@@ -1,22 +1,14 @@
 #include <SDL3/SDL.h>
 #include <stdio.h>
 
+#define SCREEN_WIDTH 1200
+#define SCREEN_HEIGHT 800
+
 int main() {
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-        return 1;
-    }
+    //creating a window
+    SDL_Window *window = SDL_CreateWindow("RayTracing", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
 
-    // Create a window
-    SDL_Window *window = SDL_CreateWindow("Example", 800, 600, SDL_WINDOW_OPENGL);
-    if (!window) {
-        printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    // Event loop
+    // screen loop
     int running = 1;
     SDL_Event event;
     while (running) {
@@ -27,7 +19,7 @@ int main() {
         }
     }
 
-    // Cleanup
+    // cleanup
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
