@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#define SCREEN_WIDTH 800 
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 1400 
+#define SCREEN_HEIGHT 800
 
 struct Circle {
     double x, y;
@@ -14,7 +14,7 @@ struct Circle {
 void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
     double radius_squared = pow(circle.r, 2);
     for (double x = circle.x - circle.r; x <= circle.x + circle.r; x++) {
-        
+
         for (double y = circle.y - circle.r; y <= circle.y + circle.r; y ++) {
             // if it satisfies the eqn of a circle
             double distance_squared = pow(x - circle.x, 2) + pow(y - circle.y, 2);
@@ -24,20 +24,22 @@ void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
                 SDL_RenderPoint(renderer, x, y);
             }
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-            // drawing the square around it
-            if((x == circle.x - circle.r || y == circle.y - circle.r) || 
-                    (x == circle.x + circle.r || y == circle.y + circle.r)){
-                SDL_RenderPoint(renderer, x, y);
-            }
 
         }
     }
-
-
-
 }
 
+// a beautiful function to draw lines passing thru the center of a circle
+void drawRays(struct Circle circle,SDL_Renderer* renderer, double spacing) {
+    for (double x = 0; x <= SCREEN_WIDTH; x+= spacing) {
 
+        for (double y = 0; y <= SCREEN_HEIGHT; y += spacing) {
+            SDL_RenderLine(renderer, x, y, circle.x, circle.y);
+        }
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+    }
+}
 int main()
 {
 
@@ -49,9 +51,8 @@ int main()
     SDL_CreateWindowAndRenderer("My Window",SCREEN_WIDTH,SCREEN_HEIGHT, 0, &window, &renderer);
 
     // light source circle
-    struct Circle lightCircle = {SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 80};
-    //temp circle
-    struct Circle tempCircle = {100, 100, 100};
+    struct Circle lightCircle = {SCREEN_WIDTH/4, SCREEN_HEIGHT/2, 80};
+
     int quit = 0;
     SDL_Event event;
     //main loop
@@ -67,11 +68,13 @@ int main()
                     quit = 1; 
             }
         }
+
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         // drawing lightCircle
         drawCircle(lightCircle, renderer);
-        //drawing another circle just because
-        drawCircle(tempCircle, renderer);
+        //draw rays coming from it
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        drawRays(lightCircle, renderer, 10);
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
     }
