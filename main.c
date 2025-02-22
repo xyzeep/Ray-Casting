@@ -33,7 +33,7 @@ void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
 }
 
 // function to draw rays
-void drawRays(SDL_Renderer* renderer, struct Circle circle, double spacing) {
+/* void drawRays(SDL_Renderer* renderer, struct Circle circle, double spacing) {
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     for (double x = 0; x <= SCREEN_WIDTH; x+= spacing) {
         for (double y = 0; y <=SCREEN_HEIGHT; y +=(spacing)) {
@@ -44,7 +44,22 @@ void drawRays(SDL_Renderer* renderer, struct Circle circle, double spacing) {
         }
     }
 
-}             
+}  */
+
+void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lines) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+    double angle_spacing = 360/number_of_lines;
+    double lineX;
+    double lineY;
+    double line_angle;
+    for(double x = 0; x < number_of_lines; x++){
+        line_angle =  angle_spacing * x;
+        lineX = circle.r * cos(line_angle);
+        lineY = circle.r * sin(line_angle);
+        SDL_RenderLine(renderer, circle.x, circle.y, lineX, lineY);
+    }    
+
+}   
 
 
 
@@ -80,7 +95,7 @@ int main()
         // drawing lightCircle
         drawCircle(lightCircle, renderer);
         //draw rays coming from it
-        drawRays(renderer, lightCircle, 50);
+        drawRays(renderer, lightCircle, 80);
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
     }
