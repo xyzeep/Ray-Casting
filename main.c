@@ -5,6 +5,7 @@
 #define SCREEN_WIDTH 1400 
 #define SCREEN_HEIGHT 800
 
+
 struct Circle {
     double x, y;
     double r;
@@ -12,6 +13,8 @@ struct Circle {
 
 // a beautiful function to draw a desired circle :)
 void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     double radius_squared = pow(circle.r, 2);
     for (double x = circle.x - circle.r; x <= circle.x + circle.r; x++) {
 
@@ -29,17 +32,22 @@ void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
     }
 }
 
-// a beautiful function to draw lines passing thru the center of a circle
-void drawRays(struct Circle circle,SDL_Renderer* renderer, double spacing) {
+// function to draw rays
+void drawRays(SDL_Renderer* renderer, struct Circle circle, double spacing) {
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     for (double x = 0; x <= SCREEN_WIDTH; x+= spacing) {
-
-        for (double y = 0; y <= SCREEN_HEIGHT; y += spacing) {
-            SDL_RenderLine(renderer, x, y, circle.x, circle.y);
+        for (double y = 0; y <=SCREEN_HEIGHT; y +=(spacing)) {
+            if((x == 0 || y == 0) || 
+                    (x == SCREEN_WIDTH || y == SCREEN_HEIGHT)){
+                SDL_RenderLine(renderer, circle.x, circle.y, x, y);
+            }
         }
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
     }
-}
+
+}             
+
+
+
 int main()
 {
 
@@ -51,7 +59,7 @@ int main()
     SDL_CreateWindowAndRenderer("My Window",SCREEN_WIDTH,SCREEN_HEIGHT, 0, &window, &renderer);
 
     // light source circle
-    struct Circle lightCircle = {SCREEN_WIDTH/4, SCREEN_HEIGHT/2, 80};
+    struct Circle lightCircle = {SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 80};
 
     int quit = 0;
     SDL_Event event;
@@ -69,12 +77,10 @@ int main()
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         // drawing lightCircle
         drawCircle(lightCircle, renderer);
         //draw rays coming from it
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        drawRays(lightCircle, renderer, 10);
+        drawRays(renderer, lightCircle, 50);
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
     }
