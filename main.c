@@ -54,8 +54,8 @@ void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lin
     double line_angle;
     for(double x = 0; x < number_of_lines; x++){
         line_angle =  angle_spacing * x;
-        lineX = circle.r * cos(line_angle);
-        lineY = circle.r * sin(line_angle);
+        lineX = (circle.r + 1000) * cos(line_angle) + circle.x;
+        lineY = (circle.r+1000) * sin(line_angle) + circle.y;
         SDL_RenderLine(renderer, circle.x, circle.y, lineX, lineY);
     }    
 
@@ -95,7 +95,7 @@ int main()
         // drawing lightCircle
         drawCircle(lightCircle, renderer);
         //draw rays coming from it
-        drawRays(renderer, lightCircle, 80);
+        drawRays(renderer, lightCircle,100 );
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
     }
