@@ -34,28 +34,30 @@ void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
 
 // function to draw rays
 /* void drawRays(SDL_Renderer* renderer, struct Circle circle, double spacing) {
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    for (double x = 0; x <= SCREEN_WIDTH; x+= spacing) {
-        for (double y = 0; y <=SCREEN_HEIGHT; y +=(spacing)) {
-            if((x == 0 || y == 0) || 
-                    (x == SCREEN_WIDTH || y == SCREEN_HEIGHT)){
-                SDL_RenderLine(renderer, circle.x, circle.y, x, y);
-            }
-        }
-    }
+   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+   for (double x = 0; x <= SCREEN_WIDTH; x+= spacing) {
+   for (double y = 0; y <=SCREEN_HEIGHT; y +=(spacing)) {
+   if((x == 0 || y == 0) || 
+   (x == SCREEN_WIDTH || y == SCREEN_HEIGHT)){
+   SDL_RenderLine(renderer, circle.x, circle.y, x, y);
+   }
+   }
+   }
 
-}  */
+   }  */
 
 void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lines) {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     double angle_spacing = 360/number_of_lines;
     double lineX;
     double lineY;
     double line_angle;
     for(double x = 0; x < number_of_lines; x++){
         line_angle =  angle_spacing * x;
-        lineX = (circle.r + 1000) * cos(line_angle) + circle.x;
-        lineY = (circle.r+1000) * sin(line_angle) + circle.y;
+
+        lineX = (circle.r * cos(line_angle * M_PI/180)) + circle.x;
+        lineY = (circle.r * sin(line_angle * M_PI/180)) + circle.y;
+
         SDL_RenderLine(renderer, circle.x, circle.y, lineX, lineY);
     }    
 
@@ -91,11 +93,12 @@ int main()
                     quit = 1; 
             }
         }
-
         // drawing lightCircle
         drawCircle(lightCircle, renderer);
         //draw rays coming from it
-        drawRays(renderer, lightCircle,100 );
+        drawRays(renderer, lightCircle,2);
+
+
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
     }
