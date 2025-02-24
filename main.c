@@ -48,7 +48,6 @@ void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lin
     }    
 }   
 
-
 int main()
 {
 
