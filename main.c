@@ -27,24 +27,10 @@ void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
                 SDL_RenderPoint(renderer, x, y);
             }
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
         }
     }
 }
 
-// function to draw rays
-/* void drawRays(SDL_Renderer* renderer, struct Circle circle, double spacing) {
-   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-   for (double x = 0; x <= SCREEN_WIDTH; x+= spacing) {
-   for (double y = 0; y <=SCREEN_HEIGHT; y +=(spacing)) {
-   if((x == 0 || y == 0) || 
-   (x == SCREEN_WIDTH || y == SCREEN_HEIGHT)){
-   SDL_RenderLine(renderer, circle.x, circle.y, x, y);
-   }
-   }
-   }
-
-   }  */
 
 void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lines) {
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -60,9 +46,7 @@ void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lin
 
         SDL_RenderLine(renderer, circle.x, circle.y, lineX, lineY);
     }    
-
 }   
-
 
 
 int main()
@@ -108,7 +92,6 @@ int main()
     SDL_Quit();
 
     return 0;
-
 }
 
 
