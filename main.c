@@ -31,11 +31,12 @@ void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
     }
 }
 
-void moveLightSource() {
-  float cursor_x, cursor_y;
-  SDL_GetMouseState(&cursor_x, &cursor_y);
-  printf("x: %f\ny: %f\n", cursor_x, cursor_y);
-  }   
+void moveLightSource(struct Circle* circle) {
+    float cursor_x, cursor_y;
+    SDL_GetMouseState(&cursor_x, &cursor_y);
+    circle->x = cursor_x;
+    circle->y = cursor_y;
+}   
 
 
 void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lines) {
@@ -69,6 +70,9 @@ int main()
 
     int quit = 0;
     SDL_Event event;
+
+        int mousePressed = 0;
+        int mouseMoving = 0;
     //main loop
     while (!quit) {
         // black color to draw the screen
@@ -82,12 +86,24 @@ int main()
                     quit = 1; 
                     break;
 
-                case SDL_EVENT_MOUSE_BUTTON_DOWN:
-                    printf("mouseClicked\n");
-                    moveLightSource(lightCircle);
+                case SDL_EVENT_MOUSE_MOTION:
+                    mouseMoving = 1;
                     break;
-           }
-            
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                    mousePressed = 1;
+                    break;
+                case SDL_EVENT_MOUSE_BUTTON_UP:
+                    mousePressed = 0;
+                    break;
+                default:
+                    break;
+            }
+            if (mousePressed && mouseMoving) 
+            {
+                moveLightSource(&lightCircle);
+            }    
+                
+
         }
 
         //draw rays coming from it
