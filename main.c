@@ -31,9 +31,15 @@ void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
     }
 }
 
+void moveLightSource() {
+  float cursor_x, cursor_y;
+  SDL_GetMouseState(&cursor_x, &cursor_y);
+  printf("x: %f\ny: %f\n", cursor_x, cursor_y);
+  }   
+
 
 void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lines) {
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 252, 252, 141, 255);
     double angle_spacing = 360/number_of_lines;
     double lineX;
     double lineY;
@@ -41,8 +47,8 @@ void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lin
     for(double x = 0; x < number_of_lines; x++){
         line_angle =  angle_spacing * x;
 
-        lineX = (circle.r * cos(line_angle * M_PI/180)) + circle.x;
-        lineY = (circle.r * sin(line_angle * M_PI/180)) + circle.y;
+        lineX = ((circle.r + SCREEN_WIDTH) * cos(line_angle * M_PI/180)) + circle.x;
+        lineY = ((circle.r + SCREEN_HEIGHT) * sin(line_angle * M_PI/180)) + circle.y;
 
         SDL_RenderLine(renderer, circle.x, circle.y, lineX, lineY);
     }    
@@ -59,7 +65,7 @@ int main()
     SDL_CreateWindowAndRenderer("My Window",SCREEN_WIDTH,SCREEN_HEIGHT, 0, &window, &renderer);
 
     // light source circle
-    struct Circle lightCircle = {SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 80};
+    struct Circle lightCircle = {SCREEN_WIDTH/4, SCREEN_HEIGHT/2, 80};
 
     int quit = 0;
     SDL_Event event;
@@ -74,13 +80,20 @@ int main()
                 case SDL_EVENT_QUIT:
                     SDL_Log("SDL Quit.");
                     quit = 1; 
-            }
+                    break;
+
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                    printf("mouseClicked\n");
+                    moveLightSource(lightCircle);
+                    break;
+           }
+            
         }
+
+        //draw rays coming from it
+        drawRays(renderer, lightCircle,100);
         // drawing lightCircle
         drawCircle(lightCircle, renderer);
-        //draw rays coming from it
-        drawRays(renderer, lightCircle,2);
-
 
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
