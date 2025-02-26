@@ -4,12 +4,18 @@
 
 #define SCREEN_WIDTH 1400 
 #define SCREEN_HEIGHT 800
-
+#define NUMBER_OF_RAYS 50
 
 struct Circle {
     double x, y;
     double r;
 };
+
+struct Ray{
+    double startX, startY;
+    double endX, endY;
+    double angle;
+};    
 
 // a beautiful function to draw a desired circle :)
 void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
@@ -39,21 +45,34 @@ void moveLightSource(struct Circle* circle) {
 }   
 
 
-void drawRays(SDL_Renderer* renderer, struct Circle circle, double number_of_lines) {
+
+void drawRays(SDL_Renderer* renderer, struct Ray rays[]) {
     SDL_SetRenderDrawColor(renderer, 252, 252, 141, 255);
-    double angle_spacing = 360/number_of_lines;
+    for(int i = 0; i < NUMBER_OF_RAYS; i++) {
+        SDL_RenderLine(renderer, rays[i].startX, rays[i].startY, rays[i].endX, rays[i].endY); 
+    }    
+}    
+
+void generateRays(struct Circle circle, struct Ray rays[]){
+    double angle_spacing = 360.0 / NUMBER_OF_RAYS;
     double lineX;
     double lineY;
     double line_angle;
-    for(double x = 0; x < number_of_lines; x++){
-        line_angle =  angle_spacing * x;
+    for(int i = 0; i < NUMBER_OF_RAYS; i++){
+        line_angle =  angle_spacing * i;
 
         lineX = ((circle.r + SCREEN_WIDTH) * cos(line_angle * M_PI/180)) + circle.x;
         lineY = ((circle.r + SCREEN_HEIGHT) * sin(line_angle * M_PI/180)) + circle.y;
+        
+        //store ray data in array
+        rays[i].startX = circle.x;
+        rays[i].startY = circle.y;
+        rays[i].endX = lineX;
+        rays[i].endY = lineY;
+        rays[i].angle = line_angle;
+    }   
+}
 
-        SDL_RenderLine(renderer, circle.x, circle.y, lineX, lineY);
-    }    
-}   
 
 int main()
 {
@@ -67,12 +86,13 @@ int main()
 
     // light source circle
     struct Circle lightCircle = {SCREEN_WIDTH/4, SCREEN_HEIGHT/2, 80};
+    struct Ray lightRays[NUMBER_OF_RAYS]; // array to store the rays
 
     int quit = 0;
     SDL_Event event;
 
-        int mousePressed = 0;
-        int mouseMoving = 0;
+    int mousePressed = 0;
+    int mouseMoving = 0;
     //main loop
     while (!quit) {
         // black color to draw the screen
@@ -102,17 +122,20 @@ int main()
             {
                 moveLightSource(&lightCircle);
             }    
-                
+
 
         }
-
+        //generate rays
+        generateRays(lightCircle, lightRays);
         //draw rays coming from it
-        drawRays(renderer, lightCircle,100);
+        drawRays(renderer, lightRays);
         // drawing lightCircle
         drawCircle(lightCircle, renderer);
 
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
+
+        //SDL_Delay(5);
     }
 
     SDL_DestroyRenderer(renderer);
