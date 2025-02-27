@@ -9,6 +9,8 @@
 struct Circle {
     double x, y;
     double r;
+    int direction; // 0 is up 1 is down
+    bool canMove;
 };
 
 struct Ray{
@@ -20,7 +22,7 @@ struct Ray{
 // a beautiful function to draw a desired circle :)
 void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
 
-  
+
     SDL_SetRenderDrawColor(renderer, 193, 219, 218, 164);
     double radius_squared = pow(circle.r, 2);
     for (double x = circle.x - circle.r; x <= circle.x + circle.r; x++) {
@@ -39,24 +41,48 @@ void moveCircle(struct Circle* circle) {
     float cursor_x, cursor_y;
     SDL_GetMouseState(&cursor_x, &cursor_y);
 
-    double radius_squared = pow(circle->r + 100, 2);
+    double radius_squared = pow(circle->r, 2);
     double cursor_distance_squared = pow(cursor_x - circle->x, 2) + pow(cursor_y - circle->y, 2);
     //if the cursor is inside the circle
-    if(cursor_distance_squared <= radius_squared) {
+    if(!circle->canMove){
+        if(cursor_distance_squared <= radius_squared) {
+            circle->canMove = true;
+            if (cursor_x >= 0 && cursor_x <= SCREEN_WIDTH) {
+                circle->x = cursor_x;
+            }    
+            if (cursor_y >=0 && cursor_y <= SCREEN_HEIGHT) {
+                circle->y = cursor_y;
+            }    
+        }
+    }    
+    else {
+
         if (cursor_x >= 0 && cursor_x <= SCREEN_WIDTH) {
             circle->x = cursor_x;
         }    
         if (cursor_y >=0 && cursor_y <= SCREEN_HEIGHT) {
             circle->y = cursor_y;
-        }    
+        }   
+    }   
 
-    }
-
-}   
+}  
 
 void animateOpaqueCircle(struct Circle* circle) {
 
-    // todo later
+    if (circle->direction == 0) {
+        circle->y -= 1;    
+    }    
+    else if (circle->direction == 1){
+        circle->y += 1;
+    }    
+
+    if (circle->y <= circle->r){
+        circle->direction = 1;
+    }
+    else if (circle->y >= SCREEN_HEIGHT - circle->r){
+        circle->direction = 0;
+    }    
+
 
 }    
 
@@ -112,11 +138,11 @@ int main()
     SDL_CreateWindowAndRenderer("RAY TRACING",SCREEN_WIDTH,SCREEN_HEIGHT, 0, &window, &renderer);
 
     // light source circle
-    struct Circle lightCircle = {SCREEN_WIDTH/4, SCREEN_HEIGHT/2, 60};
+    struct Circle lightCircle = {SCREEN_WIDTH/4, SCREEN_HEIGHT/2, 60, false};
     struct Ray lightRays[NUMBER_OF_RAYS]; // array to store the rays
 
     //opaque object
-    struct Circle opaqueCircle = {1000, SCREEN_HEIGHT/2, 100};
+    struct Circle opaqueCircle = {1000, SCREEN_HEIGHT/2, 100, 0};
 
     int quit = 0;
     SDL_Event event;
@@ -135,21 +161,18 @@ int main()
                     SDL_Log("SDL Quit.");
                     quit = 1; 
                     break;
-
-                case SDL_EVENT_MOUSE_MOTION:
-                    mouseMoving = 1;
-                    break;
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                     mousePressed = 1;
                     break;
                 case SDL_EVENT_MOUSE_BUTTON_UP:
                     mousePressed = 0;
+                    lightCircle.canMove = false;
                     break;
                 default:
                     break;
             }
             //if the mouse button is pressed and moving
-            if (mousePressed && mouseMoving) 
+            if (mousePressed) 
             {
                 moveCircle(&lightCircle);
             }    
@@ -163,6 +186,9 @@ int main()
         drawCircle(lightCircle, renderer);
         //draw opaque circle
         drawCircle(opaqueCircle, renderer);
+        //animate the opaquecircle
+        animateOpaqueCircle(&opaqueCircle);
+
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
 
