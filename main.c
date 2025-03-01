@@ -19,11 +19,10 @@ struct Ray{
     double angle;
 };    
 
-// a beautiful function to draw a desired circle :)
+// function to draw a desired circle
 void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
-
-
     SDL_SetRenderDrawColor(renderer, 193, 219, 218, 164);
+    
     double radius_squared = pow(circle.r, 2);
     for (double x = circle.x - circle.r; x <= circle.x + circle.r; x++) {
 
@@ -36,6 +35,7 @@ void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
         }
     }
 }
+
 //function to move the light source
 void moveCircle(struct Circle* circle) {
     float cursor_x, cursor_y;
@@ -67,6 +67,7 @@ void moveCircle(struct Circle* circle) {
 
 }  
 
+// function to animate the opaqueCircle
 void animateOpaqueCircle(struct Circle* circle) {
     double aniSpeed = 1.5;
     if (circle->direction == 0) {
@@ -86,11 +87,13 @@ void animateOpaqueCircle(struct Circle* circle) {
 
 }    
 
+
+// function to draw rays
 void drawRectRays(SDL_Renderer* renderer, struct Ray rays[], struct Circle opaqueCirc) {
     SDL_SetRenderDrawColor(renderer, 252, 252, 141, 255);
     double opaqueRadiusSquared = pow(opaqueCirc.r, 2);
     int thickness = 2;
-    
+
     // skip steps in rays for optimized rendering
     int step = 3;
     for (int i = 0; i < NUMBER_OF_RAYS; i++) {
@@ -99,7 +102,7 @@ void drawRectRays(SDL_Renderer* renderer, struct Ray rays[], struct Circle opaqu
         // direction of the ray (how much is x/y changing in each step)
         double dx = (rays[i].endX - rays[i].startX) / ray_length;
         double dy = (rays[i].endY - rays[i].startY) / ray_length;
-        
+
         bool drawable = true;
         // each segment (point) of current ray
         for (double j = 0; j < ray_length; j += step) {
@@ -111,24 +114,15 @@ void drawRectRays(SDL_Renderer* renderer, struct Ray rays[], struct Circle opaqu
                 break;
             }
             else {
-             // draw ray
-            SDL_FRect rect = { x, y, thickness, thickness}; 
-            SDL_RenderFillRect(renderer, &rect);
+                // draw ray
+                SDL_FRect rect = { x, y, thickness, thickness}; 
+                SDL_RenderFillRect(renderer, &rect);
             }
 
         }
     }
-}
-// draw rays using line (not helpful at all)
-void drawRays(SDL_Renderer* renderer, struct Ray rays[]) {
-    SDL_SetRenderDrawColor(renderer, 189, 189, 189, 255);
-    for(int i = 0; i < NUMBER_OF_RAYS; i++) {
-        SDL_RenderLine(renderer, rays[i].startX, rays[i].startY, rays[i].endX, rays[i].endY); 
 
-    }    
-}    
-
-
+// function to generate and store rays data
 void generateRays(struct Circle circle, struct Ray rays[]){
     double angle_spacing = 360.0 / NUMBER_OF_RAYS;
     double lineX;
@@ -151,9 +145,9 @@ void generateRays(struct Circle circle, struct Ray rays[]){
 
 int main()
 {
-
     SDL_Window *window = NULL;
     SDL_Renderer* renderer = NULL;
+    
     // initializing SDL
     SDL_Init(SDL_INIT_VIDEO);
     //creating window and renderer
@@ -161,8 +155,8 @@ int main()
 
     // light source circle
     struct Circle lightCircle = {SCREEN_WIDTH/4, SCREEN_HEIGHT/2, 60, false};
+    //lightRays
     struct Ray lightRays[NUMBER_OF_RAYS]; // array to store the rays
-
     //opaque object
     struct Circle opaqueCircle = {1000, SCREEN_HEIGHT/2, 100, 0};
 
@@ -171,12 +165,13 @@ int main()
 
     int mousePressed = 0;
     int mouseMoving = 0;
+
     //main loop
     while (!quit) {
         // black color to draw the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
         SDL_RenderClear(renderer); //clear screen to black
-
+        
         while(SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_EVENT_QUIT:
@@ -210,7 +205,6 @@ int main()
         drawCircle(opaqueCircle, renderer);
         //animate the opaquecircle
         animateOpaqueCircle(&opaqueCircle);
-
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
 
