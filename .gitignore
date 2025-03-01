@@ -1,7 +1,6 @@
 *.txt
 *.exe
 *.swp
-src/
 *.dll
 .vscode/
 *.swo
