@@ -2,6 +2,7 @@
 ## What is this?
 My own implementation of a simple ray casting algorithm using C and SDL3. The program simulates a light source that emits rays and when a ray hits an opaque object (circle), it is blocked, creating the effect of shadows. The goal is to visualize how light interacts with opaque objects on a foundational level.
 
+![Screenshot](src/Screenshot.png)
 ## Componenets
 1. Light Source Circle: A circle/source that emits a variable number of rays in all direction from its center. Size, position, and color of the circle can be modifie .
 2. Rays: Rays are essentially yellow lines in the program that are cast from the light source.
