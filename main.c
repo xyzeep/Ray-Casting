@@ -4,7 +4,7 @@
 
 #define SCREEN_WIDTH 1400 
 #define SCREEN_HEIGHT 800
-#define NUMBER_OF_RAYS 40
+#define NUMBER_OF_RAYS 150
 
 struct Circle {
     double x, y;
@@ -21,8 +21,8 @@ struct Ray{
 
 // function to draw a desired circle
 void drawCircle(struct Circle circle,SDL_Renderer* renderer) {
-    SDL_SetRenderDrawColor(renderer, 193, 219, 218, 164);
-    
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
     double radius_squared = pow(circle.r, 2);
     for (double x = circle.x - circle.r; x <= circle.x + circle.r; x++) {
 
@@ -69,7 +69,8 @@ void moveCircle(struct Circle* circle) {
 
 // function to animate the opaqueCircle
 void animateOpaqueCircle(struct Circle* circle) {
-    double aniSpeed = 1.5;
+    double aniSpeed = 12;
+
     if (circle->direction == 0) {
         circle->y -= aniSpeed;    
     }    
@@ -90,12 +91,12 @@ void animateOpaqueCircle(struct Circle* circle) {
 
 // function to draw rays
 void drawRectRays(SDL_Renderer* renderer, struct Ray rays[], struct Circle opaqueCirc) {
-    SDL_SetRenderDrawColor(renderer, 252, 252, 141, 255);
+    SDL_SetRenderDrawColor(renderer, 254, 252, 201, 255);
     double opaqueRadiusSquared = pow(opaqueCirc.r, 2);
-    int thickness = 2;
+    int thickness = 1;
 
     // skip steps in rays for optimized rendering
-    int step = 3;
+    int step = 8;
     for (int i = 0; i < NUMBER_OF_RAYS; i++) {
         double ray_length = sqrt(pow((rays[i].endX - rays[i].startX), 2) + pow((rays[i].endY - rays[i].startY), 2));
 
@@ -121,7 +122,7 @@ void drawRectRays(SDL_Renderer* renderer, struct Ray rays[], struct Circle opaqu
 
         }
     }
-
+}
 // function to generate and store rays data
 void generateRays(struct Circle circle, struct Ray rays[]){
     double angle_spacing = 360.0 / NUMBER_OF_RAYS;
@@ -147,7 +148,7 @@ int main()
 {
     SDL_Window *window = NULL;
     SDL_Renderer* renderer = NULL;
-    
+
     // initializing SDL
     SDL_Init(SDL_INIT_VIDEO);
     //creating window and renderer
@@ -157,7 +158,7 @@ int main()
     struct Circle lightCircle = {SCREEN_WIDTH/4, SCREEN_HEIGHT/2, 60, false};
     //lightRays
     struct Ray lightRays[NUMBER_OF_RAYS]; // array to store the rays
-    //opaque object
+                                          //opaque object
     struct Circle opaqueCircle = {1000, SCREEN_HEIGHT/2, 100, 0};
 
     int quit = 0;
@@ -171,7 +172,7 @@ int main()
         // black color to draw the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
         SDL_RenderClear(renderer); //clear screen to black
-        
+
         while(SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_EVENT_QUIT:
@@ -207,7 +208,8 @@ int main()
         animateOpaqueCircle(&opaqueCircle);
         // commit the renders or that kinda thing
         SDL_RenderPresent(renderer); 
-
+        
+        SDL_Delay(10);
     }
 
     SDL_DestroyRenderer(renderer);
