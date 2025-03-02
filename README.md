@@ -19,7 +19,7 @@ Not sure which one? Just download the `SDL3-devel-3.2.4-mingw.zip`.
 `build.bat`  <br>
 All the source files are inside the directory, so there's no need to tweak anything.
 
-## Note:
+## Note(SOLVED to some extent using WindowSurface instead of a Renderer):
 The current implementation becomes kind of choppy when number of rays and/or the ray step is increased, which is acknowledged. Optimization is planned to improve performance.
 
 --- 
